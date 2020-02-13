@@ -41,9 +41,7 @@ func AddSales(c echo.Context) error {
 
 func GetAllProduct(c echo.Context) error {
 	user := c.QueryParam("created_by")
-	// if err != nil {
-	// 	return echo.ErrNotFound
-	// }
+
 	product := model.FindAllProduct(&model.Product{Created_by: user})
 	return c.JSON(http.StatusOK, product)
 }
