@@ -89,17 +89,58 @@ func DeleteSales(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-// func UpdateProduct(c echo.Context) error {
-// 	id,err := strconv.Atoi(c.Param("id"))
-// 	if err != nil {
-// 		return echo.HTTPError
-// 	}
-// 	if err := model.UpdateProduct(&model.Product{ID: id});err != nil {
-// 		return echo.HTTPError
-// 	}
-// 	return c.JSON(http.status)
-// }
+func UpdateProduct(c echo.Context) error {
+	update := new(model.Product)
+	if err := c.Bind(update); err != nil {
+		return echo.ErrNotFound
+	}
+	if len(update.Name) == 0 {
+		return &echo.HTTPError{
+			Code:    http.StatusBadRequest,
+			Message: "入力が不正です",
+		}
+	}
 
-// func UpdateSales(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.ErrNotFound
+	}
 
-// }
+	if err := model.FindProduct(&model.Product{ID: id}); err != nil {
+		return echo.ErrNotFound
+	}
+
+	if err := model.UpdateProduct(update); err != nil {
+		return echo.ErrNotFound
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func UpdateSales(c echo.Context) error {
+	update := new(model.Sales)
+	if err := c.Bind(update); err != nil {
+		return echo.ErrNotFound
+	}
+	if len(update.Name) == 0 {
+		return &echo.HTTPError{
+			Code:    http.StatusBadRequest,
+			Message: "入力が不正です",
+		}
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.ErrNotFound
+	}
+
+	if err := model.FindSales(&model.Sales{ID: id}); err != nil {
+		return echo.ErrNotFound
+	}
+
+	if err := model.UpdateSales(update); err != nil {
+		return echo.ErrNotFound
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
