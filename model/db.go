@@ -16,4 +16,5 @@ func init() {
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Product{})
 	db.AutoMigrate(&Sales{})
+	db.AutoMigrate(&StockItem{})
 }

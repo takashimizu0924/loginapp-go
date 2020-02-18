@@ -2,14 +2,15 @@ package model
 
 import (
 	"fmt"
+	"time"
 )
 
 type Product struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Quantity   int    `json:"quantity"`
-	StockPlace string `json:"stockplace"`
-	Created_by string `json:"created_by`
+	ID             int    `json:"id"`
+	ProductCode    int    `json:"productcode"`
+	Productsection string `json:"productsection"`
+	Name           string `json:"productname"`
+	CreatedAt      time.Time
 }
 
 type Products []Product
@@ -39,8 +40,7 @@ func DeleteProduct(p *Product) error {
 
 func UpdateProduct(p *Product) error {
 	rows := db.Model(p).Update(map[string]interface{}{
-		"name":     p.Name,
-		"quantity": p.Quantity,
+		"name": p.Name,
 	}).RowsAffected
 	if rows == 0 {
 		return fmt.Errorf("%v はアップデートできませんでした")

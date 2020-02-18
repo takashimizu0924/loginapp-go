@@ -20,6 +20,9 @@ func AddProduct(c echo.Context) error {
 			Message: "商品名が不正です",
 		}
 	}
+	// if err := time.Parse("2020-2-17", product.CreatedAt); err != nil {
+	// 	return err
+	// }
 	model.AddProduct(product)
 	return c.JSON(http.StatusCreated, product)
 }
@@ -39,10 +42,25 @@ func AddSales(c echo.Context) error {
 	return c.JSON(http.StatusCreated, sales)
 }
 
-func GetAllProduct(c echo.Context) error {
-	user := c.QueryParam("created_by")
+func AddStockItem(c echo.Context) error {
+	item := new(model.StockItem)
+	if err := c.Bind(item); err != nil {
+		return err
+	}
+	if item.ItemName == "" {
+		return &echo.HTTPError{
+			Code:    http.StatusBadRequest,
+			Message: "売上名が不正です",
+		}
+	}
+	model.AddStockItem(item)
+	return c.JSON(http.StatusCreated, item)
+}
 
-	product := model.FindAllProduct(&model.Product{Created_by: user})
+func GetAllProduct(c echo.Context) error {
+	user, _ := strconv.Atoi(c.QueryParam("id"))
+
+	product := model.FindAllProduct(&model.Product{ID: user})
 	return c.JSON(http.StatusOK, product)
 }
 
@@ -62,6 +80,22 @@ func GetSales(c echo.Context) error {
 	}
 	sales := model.FindSales(&model.Sales{ID: id})
 	return c.JSON(http.StatusOK, sales)
+}
+
+func GetAllStockItem(c echo.Context) error {
+	id, _ := strconv.Atoi(c.QueryParam("id"))
+
+	item := model.FindAllIStockItems(&model.StockItem{ID: id})
+	return c.JSON(http.StatusOK, item)
+}
+
+func GetStockItem(c echo.Context) error {
+	id, err := strconv.Atoi(c.QueryParam("id"))
+	if err != nil {
+		return echo.ErrNotFound
+	}
+	item := model.FindStockItem(&model.StockItem{ID: id})
+	return c.JSON(http.StatusOK, item)
 }
 
 func DeleteProduct(c echo.Context) error {
