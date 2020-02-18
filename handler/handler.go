@@ -65,11 +65,11 @@ func GetAllProduct(c echo.Context) error {
 }
 
 func GetProduct(c echo.Context) error {
-	id, err := strconv.Atoi(c.QueryParam("id"))
+	code, err := strconv.Atoi(c.QueryParam("productcode"))
 	if err != nil {
 		return echo.ErrNotFound
 	}
-	product := model.FindProduct(&model.Product{ID: id})
+	product := model.FindProduct(&model.Product{ProductCode: code})
 	return c.JSON(http.StatusOK, product)
 }
 
