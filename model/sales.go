@@ -6,10 +6,12 @@ import (
 )
 
 type Sales struct {
-	ID      int       `json:"id"`
-	Name    string    `json:"name"`
-	Price   int       `json:"price"`
-	Created time.Time `json:"created_at"`
+	ID            int    `json:"id"`
+	Code          int    `json:"code"`
+	SalesName     string `json:"salesname"`
+	SalesPrice    int    `json:"salesprice"`
+	SalesQuantity int    `json:"saleequantity"`
+	Created       time.Time
 }
 
 type AllSales []Sales
@@ -33,8 +35,8 @@ func DeleteSales(s *Sales) error {
 
 func UpdateSales(s *Sales) error {
 	rows := db.Where(s).Update(map[string]interface{}{
-		"name":       s.Name,
-		"price":      s.Price,
+		"name":       s.SalesName,
+		"price":      s.SalesPrice,
 		"created_at": s.Created,
 	}).RowsAffected
 	if rows == 0 {

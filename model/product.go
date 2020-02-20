@@ -10,6 +10,7 @@ type Product struct {
 	ProductCode    int    `json:"productcode"`
 	Productsection string `json:"productsection"`
 	Name           string `json:"productname"`
+	Price          int    `json:"price"`
 	CreatedAt      time.Time
 }
 

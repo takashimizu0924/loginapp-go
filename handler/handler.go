@@ -32,7 +32,7 @@ func AddSales(c echo.Context) error {
 	if err := c.Bind(sales); err != nil {
 		return err
 	}
-	if sales.Name == "" {
+	if sales.SalesName == "" {
 		return &echo.HTTPError{
 			Code:    http.StatusBadRequest,
 			Message: "売上名が不正です",
@@ -156,7 +156,7 @@ func UpdateSales(c echo.Context) error {
 	if err := c.Bind(update); err != nil {
 		return echo.ErrNotFound
 	}
-	if len(update.Name) == 0 {
+	if len(update.SalesName) == 0 {
 		return &echo.HTTPError{
 			Code:    http.StatusBadRequest,
 			Message: "入力が不正です",
