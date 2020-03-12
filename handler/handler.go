@@ -65,20 +65,21 @@ func GetAllProduct(c echo.Context) error {
 }
 
 func GetProduct(c echo.Context) error {
-	code, err := strconv.Atoi(c.QueryParam("productcode"))
-	if err != nil {
-		return echo.ErrNotFound
-	}
-	product := model.FindProduct(&model.Product{ProductCode: code})
-	return c.JSON(http.StatusOK, product)
+	product := c.QueryParam("productname")
+	productname := model.FindProduct(&model.Product{Name: product})
+	return c.JSON(http.StatusOK, productname)
+}
+
+func GetAllSales(c echo.Context) error {
+	createdby := c.QueryParam("created_by")
+	sales := model.FindAllSales(&model.Sales{CreatedBy: createdby})
+	return c.JSON(http.StatusOK, sales)
 }
 
 func GetSales(c echo.Context) error {
-	id, err := strconv.Atoi(c.QueryParam("id"))
-	if err != nil {
-		return echo.ErrNotFound
-	}
-	sales := model.FindSales(&model.Sales{ID: id})
+	salesprice, _ := strconv.Atoi(c.QueryParam("salesprice"))
+
+	sales := model.FindSales(&model.Sales{SalesPrice: salesprice})
 	return c.JSON(http.StatusOK, sales)
 }
 

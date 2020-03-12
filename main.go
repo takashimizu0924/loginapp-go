@@ -21,6 +21,7 @@ func main() {
 	e.GET("/product", handler.GetProduct)
 	e.GET("/allproduct", handler.GetAllProduct)
 	e.GET("/sales", handler.GetSales)
+	e.GET("allsales", handler.GetAllSales)
 	e.GET("/allstockitems", handler.GetAllStockItem)
 	e.GET("/stockitem/:id", handler.GetStockItem)
 	e.DELETE("/product/:id", handler.DeleteProduct)
