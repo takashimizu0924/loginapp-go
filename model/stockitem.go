@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -11,6 +12,8 @@ type StockItem struct {
 	ItemQuantity  int    `json:"itemquantity"`
 	ItemStockyard string `json:"itemstockyard"`
 	CreatedAt     time.Time
+	UpdatedAt     string `json:"updated_at"`
+	CreatedBy     string `json:"created_by"`
 }
 
 type StockItems []StockItem
@@ -39,11 +42,23 @@ func DeleteStockItem(s *StockItem) error {
 }
 
 func UpdateStockItem(s *StockItem) error {
-	rows := db.Model(s).Update(map[string]interface{}{
-		"name": s.ItemName,
-	}).RowsAffected
-	if rows == 0 {
-		return fmt.Errorf("%v はアップデートできませんでした")
+	fmt.Println("nice")
+	// if err := db.Model(s).Updates(map[string]interface{}{
+	// 	"itemname": s.ItemName,
+	// }); err != nil {
+	// 	log.Println(err)
+	// }
+	if err := db.Model(s).Updates(StockItem{
+		ItemName:      s.ItemName,
+		ItemQuantity:  s.ItemQuantity,
+		ItemStockyard: s.ItemStockyard,
+		UpdatedAt:     s.UpdatedAt,
+		CreatedBy:     s.CreatedBy,
+	}); err != nil {
+		log.Println(err)
 	}
+	// if rows == 0 {
+	// 	return fmt.Errorf("%v はアップデートできませんでした")
+	// }
 	return nil
 }

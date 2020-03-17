@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -65,8 +66,14 @@ func GetAllProduct(c echo.Context) error {
 }
 
 func GetProduct(c echo.Context) error {
+	product := c.QueryParam("productsection")
+	productname := model.FindAllProduct(&model.Product{Productsection: product})
+	return c.JSON(http.StatusOK, productname)
+}
+
+func GetProductName(c echo.Context) error {
 	product := c.QueryParam("productname")
-	productname := model.FindProduct(&model.Product{Name: product})
+	productname := model.FindAllProduct(&model.Product{Name: product})
 	return c.JSON(http.StatusOK, productname)
 }
 
@@ -125,16 +132,6 @@ func DeleteSales(c echo.Context) error {
 }
 
 func UpdateProduct(c echo.Context) error {
-	update := new(model.Product)
-	if err := c.Bind(update); err != nil {
-		return echo.ErrNotFound
-	}
-	if len(update.Name) == 0 {
-		return &echo.HTTPError{
-			Code:    http.StatusBadRequest,
-			Message: "入力が不正です",
-		}
-	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -145,9 +142,9 @@ func UpdateProduct(c echo.Context) error {
 		return echo.ErrNotFound
 	}
 
-	if err := model.UpdateProduct(update); err != nil {
-		return echo.ErrNotFound
-	}
+	// if err := model.UpdateProduct(update); err != nil {
+	// 	return echo.ErrNotFound
+	// }
 
 	return c.NoContent(http.StatusNoContent)
 }
@@ -174,6 +171,36 @@ func UpdateSales(c echo.Context) error {
 	}
 
 	if err := model.UpdateSales(update); err != nil {
+		return echo.ErrNotFound
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func UpdateItem(c echo.Context) error {
+
+	updateData := new(model.StockItem)
+	if err := c.Bind(updateData); err != nil {
+		return err
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.ErrNotFound
+	}
+
+	itemdata := model.FindStockItem(&model.StockItem{ID: id})
+	if len(itemdata) == 0 {
+		return echo.ErrNotFound
+	}
+	item := itemdata[0]
+	item.ItemName = updateData.ItemName
+	item.ItemQuantity = updateData.ItemQuantity
+	item.ItemStockyard = updateData.ItemStockyard
+	item.UpdatedAt = updateData.UpdatedAt
+	item.CreatedBy = updateData.CreatedBy
+	fmt.Println(item)
+	if err := model.UpdateStockItem(&item); err != nil {
 		return echo.ErrNotFound
 	}
 

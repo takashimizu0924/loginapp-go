@@ -20,14 +20,15 @@ func main() {
 	e.POST("/stockitem", handler.AddStockItem)
 	e.GET("/product", handler.GetProduct)
 	e.GET("/allproduct", handler.GetAllProduct)
+	e.GET("/productname", handler.GetProductName)
 	e.GET("/sales", handler.GetSales)
 	e.GET("allsales", handler.GetAllSales)
 	e.GET("/allstockitems", handler.GetAllStockItem)
-	e.GET("/stockitem/:id", handler.GetStockItem)
+	e.GET("/stockitem", handler.GetStockItem)
 	e.DELETE("/product/:id", handler.DeleteProduct)
 	e.DELETE("/sales/:id", handler.DeleteSales)
 	// e.PUT("/product/:id", handler.UpdateProduct)
 	// e.PUT("/sales/:id", handler.UpdateSales)
-
+	e.PATCH("/updateitem/:id", handler.UpdateItem)
 	e.Logger.Fatal(e.Start(":9090"))
 }
