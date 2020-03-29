@@ -71,6 +71,13 @@ func GetProduct(c echo.Context) error {
 	return c.JSON(http.StatusOK, productname)
 }
 
+func GetProductCode(c echo.Context) error {
+	code, _ := strconv.Atoi(c.QueryParam("productcode"))
+
+	product := model.FindAllProduct(&model.Product{ProductCode: code})
+	return c.JSON(http.StatusOK, product)
+}
+
 func GetProductName(c echo.Context) error {
 	product := c.QueryParam("productname")
 	productname := model.FindAllProduct(&model.Product{Name: product})
@@ -80,6 +87,13 @@ func GetProductName(c echo.Context) error {
 func GetAllSales(c echo.Context) error {
 	createdby := c.QueryParam("created_by")
 	sales := model.FindAllSales(&model.Sales{CreatedBy: createdby})
+	return c.JSON(http.StatusOK, sales)
+}
+
+func GetSalesCode(c echo.Context) error {
+	code, _ := strconv.Atoi(c.QueryParam("code"))
+
+	sales := model.FindAllSales(&model.Sales{Code: code})
 	return c.JSON(http.StatusOK, sales)
 }
 
@@ -120,6 +134,20 @@ func DeleteProduct(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
+func DeleteStockItem(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Fatal("first")
+		return echo.ErrNotFound
+	}
+
+	if err := model.DeleteStockItem(&model.StockItem{ID: id}); err != nil {
+		log.Fatal("here", err)
+		return echo.ErrNotFound
+	}
+	return c.NoContent(http.StatusNoContent)
+}
+
 func DeleteSales(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -154,23 +182,25 @@ func UpdateSales(c echo.Context) error {
 	if err := c.Bind(update); err != nil {
 		return echo.ErrNotFound
 	}
-	if len(update.SalesName) == 0 {
-		return &echo.HTTPError{
-			Code:    http.StatusBadRequest,
-			Message: "入力が不正です",
-		}
-	}
-
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return echo.ErrNotFound
 	}
 
-	if err := model.FindSales(&model.Sales{ID: id}); err != nil {
-		return echo.ErrNotFound
-	}
+	salesdata := model.FindSales(&model.Sales{ID: id})
 
-	if err := model.UpdateSales(update); err != nil {
+	updateData := salesdata[0]
+	updateData.ReceiptNumber = update.ReceiptNumber
+	updateData.Code = update.Code
+	updateData.CompletedDate = update.CompletedDate
+	updateData.SectionName = update.SectionName
+	updateData.GestName = update.GestName
+	updateData.SalesName = update.SalesName
+	updateData.SalesPrice = update.SalesPrice
+	updateData.SalesQuantity = update.SalesQuantity
+	updateData.CreatedBy = update.CreatedBy
+	fmt.Println(salesdata)
+	if err := model.UpdateSales(&updateData); err != nil {
 		return echo.ErrNotFound
 	}
 
@@ -205,4 +235,15 @@ func UpdateItem(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+func FindPeriodSales(c echo.Context) error {
+	period := new(model.Period)
+	if err := c.Bind(period); err != nil {
+		return err
+	}
+
+	list := model.FindCompletedSales(period.StartDate, period.EndDate)
+	fmt.Println(list, len(list))
+	return c.JSON(http.StatusOK, list)
 }
